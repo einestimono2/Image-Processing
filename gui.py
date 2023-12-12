@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import FALSE, TRUE, messagebox
+from tkinter import simpledialog
 from tkinter.filedialog import askopenfilenames
 import cv2
 from PIL import Image, ImageTk
@@ -61,11 +62,30 @@ def check_opened_file():
     return TRUE
 
 
+def check_ksize():
+    try:
+        size_int = int(ksize.get())
+        if size_int % 2 == 0:
+            messagebox.showerror("Error", "Size must be an odd number!")
+            return FALSE
+        return TRUE
+    except ValueError:
+        messagebox.showerror("Error", "Size must be an integer!")
+        return False
+
+
 def gaussian():
     if not check_opened_file():
         return
 
-    result_path, smoothing_image = gaussian_filter(image1)
+    if not check_ksize():
+        return
+
+    sigma = simpledialog.askinteger(
+        title="Sigma", prompt="Enter sigma: ", initialvalue=0)
+
+    result_path = gaussian_filter(
+        image1, int(ksize.get()), sigma)
     set_image(result_path, lbl2)
 
 
@@ -73,7 +93,10 @@ def median():
     if not check_opened_file():
         return
 
-    result_path, smoothing_image = median_filter(image1)
+    if not check_ksize():
+        return
+
+    result_path = median_filter(image1, int(ksize.get()))
     set_image(result_path, lbl2)
 
 
@@ -93,6 +116,9 @@ if __name__ == "__main__":
     window = tk.Tk()
     window.title("Image Processing")
 
+    global ksize
+    ksize = tk.StringVar(value='5')
+
     window.rowconfigure(0, minsize=350, weight=1)
     window.columnconfigure(1, minsize=350, weight=1)
 
@@ -108,6 +134,9 @@ if __name__ == "__main__":
 
     btn_open = tk.Button(frm_buttons, text="Choose file",
                          command=open_image, bg="blue", fg="white")
+    lbl_size = tk.Label(frm_buttons, text="Size", fg="white", bg="green")
+    size_entry = tk.Entry(frm_buttons, textvariable=ksize,
+                          justify='center', width=5)
     lbl_filter = tk.Label(frm_buttons, text="Filter", fg="white", bg="green")
     btn_gf = tk.Button(frm_buttons, text="Gaussian Filter", command=gaussian)
     btn_mf = tk.Button(frm_buttons, text="Median Filter", command=median)
@@ -119,11 +148,13 @@ if __name__ == "__main__":
     frm_imgs.grid(row=0, column=1, sticky="nsew")
 
     btn_open.grid(row=0, column=0, sticky="ew", padx=5, pady=(10, 5))
-    lbl_filter.grid(row=1, column=0, sticky="ew", padx=5, pady=(30, 5))
-    btn_gf.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
-    btn_mf.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
-    lbl_fft.grid(row=4, column=0, sticky="ew", padx=5, pady=(30, 5))
-    btn_fft.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
+    lbl_size.grid(row=1, column=0, sticky="ew", padx=5, pady=(20, 2))
+    size_entry.grid(row=2, column=0, sticky="ew", padx=5, pady=(2, 5))
+    lbl_filter.grid(row=3, column=0, sticky="ew", padx=5, pady=(20, 5))
+    btn_gf.grid(row=4, column=0, sticky="ew", padx=5, pady=5)
+    btn_mf.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
+    lbl_fft.grid(row=6, column=0, sticky="ew", padx=5, pady=(20, 5))
+    btn_fft.grid(row=7, column=0, sticky="ew", padx=5, pady=(5, 20))
     # btn_test.grid(row=6, column=0, sticky="ew", padx=5, pady=(30, 5))
 
     lbl1.grid(row=1, column=1, sticky="nsew", padx=(20, 20), pady=(1, 30))

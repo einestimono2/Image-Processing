@@ -39,15 +39,15 @@ def show_io_fft(input_image, output_image):
     plt.show()
 
 
-def gaussian_filter(img):
-    output_image = cv2.GaussianBlur(img, (5, 5), 0)
+def gaussian_filter(img, ksize, sigma):
+    output_image = cv2.GaussianBlur(img, (ksize, ksize), sigma)
     result_path = 'images/result.png'
     cv2.imwrite(result_path, output_image)
-    return (result_path, output_image)
+    return result_path
 
 
-def median_filter(img):
-    output_image = cv2.medianBlur(img, 5)
+def median_filter(img, ksize):
+    output_image = cv2.medianBlur(img, ksize)
     result_path = 'images/result.png'
     cv2.imwrite(result_path, output_image)
-    return (result_path, output_image)
+    return result_path
