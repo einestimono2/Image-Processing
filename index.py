@@ -3,6 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+def rgb2gray(rgb):
+    return np.dot(rgb[..., :3], [0.299, 0.587, 0.144])
+
+
 def fft(img):
     dft = cv2.dft(np.float32(img), flags=cv2.DFT_COMPLEX_OUTPUT)
     dft_shift = np.fft.fftshift(dft)
@@ -18,9 +22,16 @@ def fft(img):
 
 
 def show_io_fft(input_image, output_image):
+    # Chuyển về GRAYSCALE nếu là ảnh RGB
+    if type(input_image.shape) != int:
+        input_image = rgb2gray(input_image)
+
     plt.figure("Magnitude Spectrum")
 
     if type(output_image) != str:
+        if type(output_image.shape) != int:
+            output_image = rgb2gray(output_image)
+
         plt.subplot(221), plt.imshow(input_image, cmap='gray')
         plt.title('Input Image'), plt.xticks([]), plt.yticks([])
         plt.subplot(222), plt.imshow(fft(input_image), cmap='gray')

@@ -16,17 +16,17 @@ def set_image(filepath, lbl):
         return
 
     img = Image.open(filepath)
-    img = img.convert("L")
+    # img = img.convert("L")
     img.thumbnail((350, 350))
     img = ImageTk.PhotoImage(img)
 
     if lbl == lbl1:
         global image1
-        image1 = cv2.imread(filepath, 0)
+        image1 = cv2.imread(filepath)
         txt1.grid(row=0, column=1, sticky="nsew", padx=(20, 20), pady=(30, 1))
     else:
         global image2
-        image2 = cv2.imread(filepath, 0)
+        image2 = cv2.imread(filepath)
         txt2.grid(row=0, column=2, sticky="nsew", padx=(20, 20), pady=(30, 1))
 
     lbl.configure(image=img)
